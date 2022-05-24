@@ -48,7 +48,7 @@ namespace TeamHamsterBank
         }
         public static void LoadUsers()
         {
-           try
+            try
             {
                 if (File.Exists("Users.txt"))
                 {
@@ -82,7 +82,7 @@ namespace TeamHamsterBank
         }
         public static void LoadTransactions()
         {
-           try
+            try
             {
                 if (File.Exists("Transactions.txt"))
                 {
@@ -119,9 +119,9 @@ namespace TeamHamsterBank
             {
                 if (user[3] == "Admin")
                 {
-                    Bank.UsersList.Add(new  Admin(user[0], user[1], user[2]));
+                    Bank.UsersList.Add(new Admin(user[0], user[1], user[2]));
                 }
-                else if(user[3] == "Customer")
+                else if (user[3] == "Customer")
                 {
                     Bank.UsersList.Add(new Customer(user[0], user[1], user[2]));
                 }
@@ -173,19 +173,46 @@ namespace TeamHamsterBank
         {
             try
             {
-                string save = String.Empty;
-                foreach (string[] transaction in TransactionsFile)
-                {
-                    save +=$"{transaction[0]}________{transaction[1]}________{transaction[2]}" +
-                        $"________{transaction[3]}________{transaction[4]}\n";
-                }
-                File.WriteAllText("Transactions.txt", save,
-                    Encoding.Default);
+                WriteTransactionsToFile();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        public static void WriteTransactionsToFile()
+        {
+            if (CheckTransactionsListData(TransactionsFile))
+            {
+                string save = String.Empty;
+                foreach (string[] transaction in TransactionsFile)
+                {
+                    save += $"{transaction[0]}________{transaction[1]}________{transaction[2]}" +
+                        $"________{transaction[3]}________{transaction[4]}\n";
+                }
+                File.WriteAllText("Transactions.txt", save,
+                    Encoding.Default);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid data detected !");
+            }
+        }
+
+        public static bool CheckTransactionsListData(List<string[]> list)
+        {
+            // If any row has different length
+            if (list.Any(row => row.Length != list[0].Length))
+            {
+                return false;
+            }
+            // If the account number is valid (the string cannot be parsed)
+            if (!list.All(row => int.TryParse(row[4], out int n)))
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

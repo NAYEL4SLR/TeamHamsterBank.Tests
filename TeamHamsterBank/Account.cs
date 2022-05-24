@@ -55,6 +55,11 @@ namespace TeamHamsterBank
             _currency=currency;
             _customerID = customerID;
         }
+        // Constructor for testing
+        public Account(decimal balance)
+        {
+            _balance = balance;
+        }
         public void SortOutDetails(List<string[]> transactionsFile)
         {
             foreach (string[] transaction in transactionsFile)
